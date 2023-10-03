@@ -1,0 +1,63 @@
+server:
+  port: 9090
+spring:
+  application:
+    name: USER-SERVICE
+  datasource:
+    url: jdbc:mysql://localhost:3306/microservice
+    username: root
+    password: DarshanRaj1@
+  jpa:
+    generate-ddl: true
+    hibernate:
+      ddl-auto: update
+    show-sql: true
+
+  config:
+    import: optional:configserver:http://localhost:9094
+
+#eureka:
+#  client:
+#    fetch-registry: true
+#
+#
+#    register-with-eureka: true
+#
+#    service-url:
+#      defaultZone: http://localhost:8761/eureka/
+eureka:
+  client:
+  instance:
+    prefer-ip-address: true
+
+management:
+  health:
+    circuit-breakers:
+      enabled: true
+  endpoints:
+    web:
+      exposure:
+        include: health
+  endpoint:
+    health:
+      show-details: always
+
+resilience4j:
+  circuit-breaker:
+    instances:
+      # Unique identifier for this circuit breaker instance.
+      user-rating-hotel-service:
+        registerHealthIndicator: true  # Register a health indicator for monitoring.
+        eventConsumerBufferSize: 10   # Size of the buffer for circuit breaker events.
+        failureRateThreshold: 50      # Threshold for considering the circuit as open (in percentage).
+        minimumNumberOfCalls: 5       # Minimum number of calls needed before considering the circuit breaker.
+        automaticTransitionFromOpenToHalfOpenEnabled: true  # Automatically transition from open to half-open.
+        waitDurationInOpenState: 6s    # Duration to wait in open state before transitioning to half-open.
+        permittedNumberOfCallsInHalfOpenState: 3  # Number of calls allowed in half-open state.
+        slidingWindowSize: 10         # Size of the sliding window for metrics collection.
+        slidingWindowType: COUNT_BASED  # Type of sliding window for metrics collection.
+  retry:
+    instances:
+      RatingHotelService:
+        maxAttempts: 3
+        waitDuration: 5s

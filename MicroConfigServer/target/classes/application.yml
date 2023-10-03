@@ -1,0 +1,13 @@
+server:
+  port: 9094
+spring:
+  cloud:
+    config:
+      server:
+        git:
+          uri: https://github.com/DC-store/micro-Service-Repository
+          clone-on-start: true
+
+
+  application:
+    name: CONFIG-SERVER
